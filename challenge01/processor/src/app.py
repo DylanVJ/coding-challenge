@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 from sentence_splitter import SentenceSplitter
 from sentence_transformers import SentenceTransformer
 
@@ -93,10 +94,12 @@ def proccess_documents(document: Dict[str, Any]) -> List[Dict[str, Any]]:
     description = description.encode("ascii", "ignore").decode("ascii")
 
     chunks = split_into_chunks(description)
-    result = []
 
-    for idx, chunk in enumerate(chunks):
-        embedding = generate_embedding(chunk)
+    # encode all chunks of this document in a single model call
+    embeddings = model.encode(chunks).tolist()
+
+    result = []
+    for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         result.append({
             "doc_id": str(doc_id),
             "chunk_id": f"{doc_id}-{idx}",
@@ -113,8 +116,15 @@ def proccess_documents(document: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 def index_documents(es: Elasticsearch, index_name: str, docs: List[Dict[str, Any]]) -> None:
+    # reduce the number of indexing calls by using bulk API
+    actions = []
     for doc in docs:
-        es.index(index=index_name, id=doc["chunk_id"], document=doc)
+        actions.append({
+            "_index": index_name,
+            "_id": doc["chunk_id"],
+            "_source": doc
+        })
+    bulk(es, actions)
 
 
 def semantic_search(es: Elasticsearch, index_name: str, query_text: str, k: int = 3) -> Dict[str, Any]:
@@ -142,9 +152,14 @@ def main() -> None:
         print("No JSON files found.")
         return
 
+    all_chunks = []
     for document in documents:
         built_docs = proccess_documents(document)
-        index_documents(es, INDEX_NAME, built_docs)
+        all_chunks.extend(built_docs)
+
+    index_documents(es, INDEX_NAME, all_chunks)
+    # log the number for better visibility
+    print(f"Indexed {len(all_chunks)} chunks from {len(documents)} documents.")
 
     print("Semantic search: examples")
 
