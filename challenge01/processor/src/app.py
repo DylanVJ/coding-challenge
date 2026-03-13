@@ -73,20 +73,24 @@ def generate_embedding(text: str) -> List[float]:
 
 
 def proccess_documents(document: Dict[str, Any]) -> List[Dict[str, Any]]:
-    # TODO: Complete the required code to process each document:
-    # Split the document into chunks
-    # Generate an embedding for each chunk
-    # Add the embeddings to a new document along with the remaining fields
-    # Filter and replace non-ASCII characters
-    # Ensure that subjects are capitalized
-
-
     doc_id = document.get("id")
     title = document.get("title", "")
     description = document.get("description", "")
+    authors = document.get("authors", [])
+    first_publish_year = document.get("first_publish_year")
+    language = document.get("language", [])
+
+    # normalize subjects to a consistent casing before indexing
+    subjects = []
+    for subject in document.get("subjects", []):
+        subjects.append(subject.capitalize())
 
     if not doc_id or not description:
         raise ValueError("Document must contain at least 'id' and 'description'")
+    
+    # remove non-ASCII characters to avoid issues during embedding and indexing
+    title = title.encode("ascii", "ignore").decode("ascii")
+    description = description.encode("ascii", "ignore").decode("ascii")
 
     chunks = split_into_chunks(description)
     result = []
@@ -98,6 +102,10 @@ def proccess_documents(document: Dict[str, Any]) -> List[Dict[str, Any]]:
             "chunk_id": f"{doc_id}-{idx}",
             "title": title,
             "description": chunk,
+            "authors": authors,
+            "first_publish_year": first_publish_year,
+            "subjects": subjects,
+            "language": language,
             "embedding": embedding
         })
 
