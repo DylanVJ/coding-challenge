@@ -23,6 +23,7 @@ in natural language.
 git clone -b solution-challenge01 https://github.com/DylanVJ/coding-challenge.git
 ```
 
+First we need to go to challenge01 carpet and then we can execute:
 ```bash
 docker compose up --build
 ```
