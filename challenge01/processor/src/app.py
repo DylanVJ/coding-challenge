@@ -37,7 +37,7 @@ def create_index(es: Elasticsearch, index_name: str) -> None:
                 "language": {"type": "keyword"},
                 "embedding": {
                     "type": "dense_vector",
-                    "dims": 384 # Adjust the dimensions where required.
+                    "dims": 384
                 }
             }
         }
@@ -68,8 +68,8 @@ def split_into_chunks(text: str, max_sentences: int = 5) -> List[str]:
 
 
 def generate_embedding(text: str) -> List[float]:
-    # TODO: Create the required code to generate text embeddings.
-    return None
+    # result is converted to a plain Python list for Elasticsearch
+    return model.encode(text).tolist()
 
 
 def proccess_documents(document: Dict[str, Any]) -> List[Dict[str, Any]]:
