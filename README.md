@@ -13,3 +13,9 @@ solution-challenge01
 git clone https://github.com/DylanVJ/coding-challenge.git
 cd coding-challenge
 git checkout solution-challenge01
+```
+
+For a better solution use
+```bash
+git clone -b solution-challenge01 https://github.com/DylanVJ/coding-challenge.git
+```
