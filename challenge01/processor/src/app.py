@@ -29,7 +29,12 @@ def create_index(es: Elasticsearch, index_name: str) -> None:
             "properties": {
                 "doc_id": {"type": "keyword"},
                 "chunk_id": {"type": "keyword"},
-                # TODO: Complete the mapping with the required fields and types.
+                "title": {"type": "text"},
+                "description": {"type": "text"},
+                "authors": {"type": "keyword"},
+                "first_publish_year": {"type": "integer"},
+                "subjects": {"type": "keyword"},
+                "language": {"type": "keyword"},
                 "embedding": {
                     "type": "dense_vector",
                     "dims": 384 # Adjust the dimensions where required.
