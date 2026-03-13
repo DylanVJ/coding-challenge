@@ -121,17 +121,16 @@ def semantic_search(es: Elasticsearch, index_name: str, query_text: str, k: int 
     # Query to perform semantic search
     query_vector = generate_embedding(query_text)
 
-    body = {
-        "knn": {
+    return es.search(
+        index=index_name,
+        knn={
             "field": "embedding",
             "query_vector": query_vector,
             "k": k,
             "num_candidates": 10
         },
-        "_source": ["doc_id", "chunk_id", "title", "content"]
-    }
-
-    return es.search(index=index_name, body=body)
+        source=["doc_id", "chunk_id", "title", "description"]
+    )
 
 
 def main() -> None:
