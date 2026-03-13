@@ -47,5 +47,20 @@ services:
     working_dir: /app
     command: ["python", "src/app.py"]
 
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: challenge-ui
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - INDEX_NAME=documents
+      - EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+    ports:
+      - "8501:8501"
+
 volumes:
   es_data:
