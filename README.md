@@ -20,6 +20,10 @@ in natural language.
 ## How to Run
 
 ```bash
+git clone -b solution-challenge01 https://github.com/DylanVJ/coding-challenge.git
+```
+
+```bash
 docker compose up --build
 ```
 
@@ -109,10 +113,6 @@ A `ui/` service was added with:
   relevance score.
 - `@st.cache_resource` on both the ES client and the model to avoid
   reloading them on every page interaction.
-
-**Key fix**: pinned `elasticsearch==8.15.1` in `ui/requirements.txt` to match the
-server version. The auto-installed v9 client sent incompatible headers and caused
-a `BadRequestError(400, media_type_header_exception)`.
 
 ## Dataset
 
