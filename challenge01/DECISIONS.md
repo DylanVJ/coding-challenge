@@ -14,16 +14,12 @@ the appropriate types:
 - `embedding` was already there, with `dims: 384` which matches the output size
   of the `all-MiniLM-L6-v2` model.
 
----
-
 ## TODO 2: Embedding generation (`generate_embedding`)
 
 The model was already initialized at the top of the file as a global variable `model`.
 It was just a matter of using it: `model.encode(text)` generates the vector, and
 `.tolist()` converts it from a numpy array to a plain Python list, which is what
 Elasticsearch expects.
-
----
 
 ## TODO 3: Document processing (`proccess_documents`)
 
@@ -37,3 +33,10 @@ The function had the base structure but was missing several things:
   avoiding issues in the embedding pipeline.
 - Subjects came in inconsistent casing. Applied `capitalize()` to each one to
   normalize them before indexing.
+
+## TODO 4: Indexing documents (`index_documents`)
+
+Straightforward loop over the list of processed chunks, calling `es.index()` for
+each one. Used `chunk_id` as the document ID in Elasticsearch so each chunk has
+a unique, deterministic identifier. This also means re-running the processor
+won't create duplicates — it will just overwrite existing documents.
