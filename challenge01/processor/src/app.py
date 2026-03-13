@@ -149,9 +149,21 @@ def main() -> None:
 
     print("Semantic search: examples")
 
-    # TODO: Create several semantic search queries and print the results.
-    # Use the function semantic_search()
+    queries = [
+        "a hobbit leaves home on an unexpected journey with dwarves and a wizard",
+        "children step through a magical portal into a world ruled by an evil witch",
+        "a young orphan grows up to become the greatest wizard of his generation",
+        "a fellowship embarks on a dangerous mission to destroy a ring of ultimate power",
+        "a dragon rider fights to save her world from an ancient evil rising again",
+    ]
 
+    for query in queries:
+        print(f"Query: {query}")
+        results = semantic_search(es, INDEX_NAME, query)
+        for hit in results["hits"]["hits"]:
+            source = hit["_source"]
+            print(f"  - {source.get('title')} (score: {hit['_score']:.4f})")
+        print()
 
 if __name__ == "__main__":
     main()

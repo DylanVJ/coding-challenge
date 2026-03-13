@@ -40,3 +40,12 @@ Straightforward loop over the list of processed chunks, calling `es.index()` for
 each one. Used `chunk_id` as the document ID in Elasticsearch so each chunk has
 a unique, deterministic identifier. This also means re-running the processor
 won't create duplicates — it will just overwrite existing documents.
+
+## TODO 5: Semantic search queries (`main`)
+
+Added five queries inspired by classic fantasy stories I enjoy. Each query
+describes a familiar plot in plain natural language rather than using the
+actual book title, which is a good way to test whether the semantic search
+is finding the right books based on meaning rather than keywords.
+Results are printed with the book title and the relevance score to make it
+easy to evaluate the quality of the results visually.
